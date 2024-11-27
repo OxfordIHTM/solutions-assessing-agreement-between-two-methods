@@ -1,0 +1,14 @@
+---
+title: Statistical methods for assessing agreement between two methods of clinical measurement
+subtitle: Solutions
+author:
+  - name: Ernest Guevarra
+    orcid: 0000-0002-4887-4415
+    email: ernest.guevarra@ndm.ox.ac.uk
+    affiliation: 
+      - name: Centre for Tropical Medicine and Global Health, Nuffield Department of Medicine, University of Oxford
+        city: Oxford
+date: last-modified
+date-format: "DD MMMM YYYY"
+---
+
