@@ -237,7 +237,7 @@ calculate_ba_metrics <- function(df,
   m2 <- df[[m2]]
 
   mean_values <- calculate_mean_values(m1 = m1, m2 = m2)
-  differences <- calculate_diff_values(m1 = m1, m2 = m1)
+  differences <- calculate_diff_values(m1 = m1, m2 = m2)
   mean_differences <- calculate_mean_diff(m1 = m1, m2 = m2)
   limits <- calculate_diff_limits(m1 = m1, m2 = m2)
 
@@ -252,7 +252,7 @@ calculate_ba_metrics <- function(df,
   } else {
     data.frame(
       ba_data, mean_values, differences, mean_differences,
-      upper_limit, lower_limit
+      upper_limit = limits[1], lower_limit = limits[2]
     )
   }
 }
@@ -260,11 +260,160 @@ calculate_ba_metrics <- function(df,
 
 ## Task 3: Task 3: Create a Bland and Altman plot ----
 
+### Function to create a Bland and Altman plot - basic plot ----
+
+# basic plot: scatter plot of mean values and difference of values with lines
+# for mean of differences in values, upper limits of agreement, lower limits
+# of agreement
+#   - ba_metrics - a data.frame with metrics needed for Bland and Altman plot
+#     produced by calculate_ba_metrics() function
+
 plot_ba <- function(ba_metrics) {
   plot(
-    x = ba_metrics$mean_values,
+    x = ba_metrics$mean_values, 
     y = ba_metrics$differences
   )
 
-  
+  abline(h = ba_metrics$mean_differences)
+  abline(h = ba_metrics$upper_limit)
+  abline(h = ba_metrics$lower_limit)
 }
+
+### Function to create a Bland and Altman plot - plot with labels ----
+
+# plot with labels: scatter plot of mean values and difference of values with
+# lines for mean of differences in values, upper limits of agreement, lower
+# limits of agreement, and appropriate labels.
+#   - ba_metrics - a data.frame with metrics needed for Bland and Altman plot
+#                  produced by calculate_ba_metrics() function
+#   - title - A character value for the title of plot. Set to show Bland and 
+#     Altman Plot
+#   - xlab, ylab - A character value for the x- and y-axis labels respectively;
+#     By default, set to NULL to show default axis labels used by R
+#   - limits_lab - Logical value (TRUE or FALSE); if TRUE (default), labels
+#     are added to the lines for mean of differences and the limits of agreement
+
+plot_ba <- function(ba_metrics, 
+                    title = "Bland and Altman plot",
+                    xlab = NULL, ylab = NULL, limits_lab = TRUE) {
+  plot(
+    x = ba_metrics$mean_values, 
+    y = ba_metrics$differences,
+    main = title,
+    xlab = xlab, ylab = NULL
+  )
+
+  abline(h = ba_metrics$mean_differences, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$upper_limit, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$lower_limit, lty = 2, lwd = 0.7)
+
+  if (limits_lab) {
+    ## Label for mean differences line
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$mean_differences, 
+      labels = paste0(
+        "Mean difference: ", round(ba_metrics$mean_differences, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for upper limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$upper_limit, 
+      labels = paste0(
+        "Upper limit: ", round(ba_metrics$upper_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for lower limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$lower_limit, 
+      labels = paste0(
+        "Lower limit: ", round(ba_metrics$lower_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+  }
+}
+
+### Function to create a Bland and Altman plot - plot with labels & colours ----
+
+# plot with labels and colours: scatter plot of mean values and difference of 
+# values with lines for mean of differences in values, upper limits of agreement,
+# lower limits of agreement, and appropriate labels.
+#   - ba_metrics - a data.frame with metrics needed for Bland and Altman plot
+#                  produced by calculate_ba_metrics() function
+#   - title - A character value for the title of plot. Set to show Bland and 
+#     Altman Plot
+#   - xlab, ylab - A character value for the x- and y-axis labels respectively;
+#     By default, set to NULL to show default axis labels used by R
+#   - limits_lab - Logical value (TRUE or FALSE); if TRUE (default), labels
+#     are added to the lines for mean of differences and the limits of agreement
+#   - pch - An integer value for the character type to use for the points of the
+#     plot. See ?pch for details. Default is NULL which will use default pch
+#     value used by R (which is 1 for a hollow circle)
+#   - col - A colour specification to use for colouring the points in the
+#     scatter plot. Default is NULL which sets the colour to default colour used
+#     by R (black). Note that for hollow points (pch from 0 to 14) and for
+#     points with a fill element (pch from 21 to 25), col will
+#     colour the outline of the point. For pch values from 15 to 19, col will
+#     colour the whole point. To colour the fill element of points specified by
+#     pch from 21 to 25, see bg argument.
+#   - bg - A colour specification to use for colouring the fill element of
+#     points with a fill element (pch from 21 to 25). Default is NULL which
+#     sets the fill element to a light gray.
+#   - cex - Character expansion numeric value for the points of the scatter
+#     plot. Default is NULL which will use the default size of points used by R
+#     which is a value of 1.
+
+plot_ba <- function(ba_metrics, 
+                    title = "Bland and Altman plot",
+                    xlab = NULL, ylab = NULL, limits_lab = TRUE,
+                    pch = NULL, col = NULL, bg = NULL, cex = NULL) {
+  plot(
+    x = ba_metrics$mean_values, 
+    y = ba_metrics$differences,
+    main = title,
+    xlab = xlab, ylab = NULL,
+    pch = pch, 
+    col = ifelse(is.null(col), "black", col), 
+    bg = bg,
+    cex = cex
+  )
+
+  abline(h = ba_metrics$mean_differences, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$upper_limit, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$lower_limit, lty = 2, lwd = 0.7)
+
+  if (limits_lab) {
+    ## Label for mean differences line
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$mean_differences, 
+      labels = paste0(
+        "Mean difference: ", round(ba_metrics$mean_differences, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for upper limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$upper_limit, 
+      labels = paste0(
+        "Upper limit: ", round(ba_metrics$upper_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for lower limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$lower_limit, 
+      labels = paste0(
+        "Lower limit: ", round(ba_metrics$lower_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+  }
+}
+
+
