@@ -12,3 +12,712 @@ date: last-modified
 date-format: "DD MMMM YYYY"
 ---
 
+This document provides detailed solutions to the tasks set in the **Statistical methods for assessing agreement between two methods of clinical measurement** exercise set of the [**Open and Reproducible Science in R**](https://oxford-ihtm.io/teaching/) module of the [**MSc in International Health and Tropical Medicine**](https://www.tropicalmedicine.ox.ac.uk/study-with-us/msc-ihtm).
+
+# Introduction to the exercise {#sec-introduction}
+
+The following tasks have been setup to help students get familiar with functional programming in R.
+
+The students are expected to go through the tasks and appropriately write R code/script to fulfill the tasks and/or to answer the question/s being asked within the tasks. R code/script should be written inside a single R file named `ba.R` and saved in the project’s root directory.
+
+This exercise is based on:
+
+> Bland, J. M. & Altman, DouglasG. Statistical Methods For Assessing Agreement Between Two Methods Of Clinical Measurement. Lancet 327, 307–310 (1986).
+
+The dataset used in the paper can be accessed from the teaching_datasets repository. The URL to the `.dat` file is [https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat](https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat).
+
+The `ba.dat` dataset contains peak expiratory flow rate (PEFR) measurements (in litres per minute) taken with a Wright peak flow metre (`Wright` variable) and a Mini-Wright peak flow metre (`Mini` variable). This is the same data that is presented in the referenced Lancet article above.
+
+# Task 1: Read the dataset {#sec-read-dataset}
+
+This task is asking for the learner to create a function that would do the following:
+
+1. Download the `ba.dat` file from the provided download link/URL; and,
+
+2. Read that data into R.
+
+To create this function, we can use already existing functions that does each step separately. For downloading files from the internet, there is a function called `download.file()`. For reading a text dataset, we can look at the `read.table()` family of functions.
+
+## Downloading files from the internet {#sec-download-files}
+
+The `download.file()` is the most straightforward function available in base R for downloading files from the internet. The basic syntax for the function is shown below:
+
+```{r}
+#| label: download-files
+
+download.file(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat", # <1>
+  destfile = "data/ba.dat" # <2>
+)
+```
+
+1. Provide the download link/URL for your file. For this task, it would be  [https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat](https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat). Note that download link/URL should be enclosed in quotes.
+
+2. Provide the file path to where the file should be downloaded. The instructions specifically said that this should be downloaded into the `data` directory of the project and for the name, we just use the same name of the data file.
+
+The arguments `url` and `destfile` are the minimum required arguments to specify. When you run this line of code, you should expect the `ba.dat` file to be downloaded into the `data` directory. You can check this by issuing the following command on the R console:
+
+```{r}
+#| label: check-download
+
+list.files("data")
+```
+
+which shows that a file called `ba.dat` can be found inside the `data` directory of this project.
+
+## Reading text data {#sec-reading-data}
+
+### Reading text data after downloading {#sec-read-download-data}
+
+The `read.table()` function can be used to read the `ba.dat` file. After the data has been downloaded, it should be available in the `data` directory of our
+project. With this, we can use the `read.table()` function as follows:
+
+```{r}
+#| label: read-table
+#| eval: false
+
+read.table(
+  file = "data/ba.dat", # <1>
+  header = TRUE, # <2>
+  sep = " " # <3>
+)
+```
+
+1. Specify the file path to the dataset. In our case, the dataset has been downloaded into the `data` directory so the relative file path to the data is `data/ba.dat`.
+
+2. Specify whether the dataset being read has variable names or column names in the first row. In our case, the `ba.dat` dataset has variable names included (as described in the instructions). So, we specify `header = TRUE`.
+
+3. Specify the value separators used in the dataset being read. The `ba.dat` dataset uses whitespace (`" "`) to separate values. So we specifcy `sep = " "`.
+
+When we run this line of code, we get:
+
+```{r}
+#| label: read-table-show
+#| echo: false
+
+read.table(
+  file = "data/ba.dat",
+  header = TRUE,
+  sep = " "
+)
+```
+
+We get a `data.frame` with 17 rows and 2 columns of data.
+
+### Reading text data without downloading {#sec-read-data-no-download}
+
+The `read.table()` family of functions allow for reading of text data direct from a download link/URL without having to download the data first. The `file` argument in the `read.table()` family of functions accepts URL of a text data file. The function then reads the data directly from that URL. This functionality is useful for when downloading of data is not needed or if there are rules with regard to downloading and/or keeping of the required dataset. However, it should be noted that reproducibility using a link to read data directly into R depends on whether the URL link is a permanent link that will not change over time.
+
+To read the `ba.dat` dataset directly into R without downloading first, we use the following code:
+
+```{r}
+#| label: read-table-url
+#| eval: false
+
+read.table(
+  file = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  header = TRUE,
+  sep = " "
+)
+```
+
+which gives:
+
+```{r}
+#| label: read-table-url-show
+#| echo: false
+
+read.table(
+  file = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  header = TRUE,
+  sep = " "
+)
+```
+
+This is the same output as the earlier approach.
+
+### Function to download and then read the dataset {#sec-download-read}
+
+Now that we know how to use the `download.file()` and the `read.table()` functions, we can now use them into creating a function that downloads the data and then reads it. A basic implementation of this function will look like this:
+
+```{r}
+#| label: download-read-function1
+#| eval: true
+
+read_ba_data <- function(url, destfile) {               # <1>
+  download.file(url = url, destfile = destfile)         # <2>
+
+  read.table(file = destfile, header = TRUE, sep = " ") # <3>
+}
+```
+
+1. We set a function name of `read_ba_data()` and use arguments for `url` and `destfile` which are the two required arguments for `download.file()`. The `destfile` argument will then be used as the specification for the `file` argument for the path to the file to read in the `read.table()` function.
+
+2. Use the `url` and `destfile` argument specification to supply corresponding input values to the `download.file()` function.
+
+3. Use the `destfile` argument specification to supply input value to the `read.table()` function. Specifications for `header` and `sep` arguments are hardcoded as it assumes that the `ba.dat` file has a header and uses `" "` as value separator.
+
+We can then try this function to see if it gives us the expected outputs.
+
+```{r}
+#| label: download-read-function-syntax
+#| eval: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  destfile = "data/ba.dat"
+)
+```
+
+which produces the following result:
+
+```{r}
+#| label: download-read-function-show
+#| echo: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  destfile = "data/ba.dat"
+)
+```
+
+The same output is produced as earlier when the dataset was read into R. To check that the download component worked, we check if the `ba.dat` dataset is in the `data` directory of the project.
+
+```{r}
+#| label: download-read-function-test
+
+list.files("data")
+```
+
+The `ba.dat` file is in the `data` directory. The `read_ba_data()` function works as expected.
+
+### Function to conditionally download dataset and then read the dataset {#sec-download-read-conditional}
+
+The `read_ba_data()` function is working the way we expect and need it to.
+
+However, we can still consider adding some other features/functionalities that can make the function work more efficiently. For example, depending on our context and our requirements, we might want to just read the `ba.dat` dataset directly from the URL without downloading it. So, we probably would like to give the user of our function the ability to decide whether the file should be downloaded and then read or should just be read into R directly. For, this, we can refactor the earlier function as follows:
+
+```{r}
+#| label: download-read-function2
+
+read_ba_data <- function(url, 
+                         download = TRUE,                # <1> 
+                         destfile) {
+  ## If download = TRUE, download dataset
+  if (download) {                                        # <2>
+    download.file(url = url, destfile = destfile)
+  } else {
+  ## If download = FALSE, set destfile as url link
+    destfile <- url                                      # <3>
+  }
+
+  ## Read dataset
+  read.table(file = destfile, header = TRUE, sep = " ")
+}
+```
+
+1. Use an argument called `download` which takes in logical values (TRUE or FALSE). If TRUE, then the function should download the dataset in the specified `destfile`. If FALSE, then the dataset is read directly from the `url`.
+
+2. Create a conditional `if()` statement based on whether `download` argument is TRUE or FALSE. If TRUE, then the function should download the dataset in the specified `destfile`.
+
+3. If the `download` conditions is FALSE, then the `destfile` argument is specified with the `url` value so that the dataset is read directly from the `url`.
+
+To test that this updated `read_ba_data()` function works as expected, we first remove the `ba.dat` file that we have already downloaded earlier by using the following commands in the R console:
+
+```{r}
+#| label: download-read-function2-test1
+
+file.remove("data/ba.dat")
+```
+
+Then, we check whether it has indeed been removed:
+
+```{r}
+#| label: download-read-function2-test2
+
+file.exists("data/ba.dat")
+```
+
+The `ba.dat` file doesn't exist in the `data` directory.
+
+We then test the updated `read_ba_data()` function first with `download = FALSE` as follows:
+
+
+```{r}
+#| label: download-read-function2-test3
+#| eval: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = FALSE # <1>
+)
+```
+
+1. Set `download = FALSE` so that `ba.dat` is read directly into R without downloading. Since no download of data will be performed, there is no need to specify the `destfile` argument.
+
+This code outputs the following:
+
+```{r}
+#| label: download-read-function2-show
+#| echo: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = FALSE # <1>
+)
+```
+
+which is the same output as the earlier function.
+
+We then test whether or not the `ba.dat` file is present in the `data` directory. Our expectation is that the `ba.dat` file is not to be found there. We test as follows:
+
+```{r}
+#| label: download-read-function2-test4
+
+file.exists("data/ba.dat")
+```
+
+The `ba.dat` file is not found in the `data` directory. The updated `read_ba_data()` function works as expected.
+
+### Function to conditionally download dataset and then read the dataset - overwrite {#sec-download-read-conditional-overwrite}
+
+The updated `read_ba_data()` function is working the way we expect and need it to.
+
+However, we can still consider adding some conditionalities that can make the function work more efficiently. For example, once we have used the current `read_ba_data()` function with `download = TRUE` specification, the `ba.dat` file should already be in our `data` directory. Since this dataset is not expected to change anymore[^1], we might want to update the current `read_ba_data()` function such that it will not overwrite an existing download of `ba.dat` if `download = TRUE`. This is useful as we don't have to repeat a download operation if the file is already present in our `data` directory. To implement this functionality, the `read_ba_data()` function can be updated as follows:
+
+```{r}
+#| label: download-read-function3
+
+read_ba_data <- function(url, 
+                         download = TRUE, 
+                         destfile,
+                         overwrite = FALSE) {                             # <1>  
+  ## If download = TRUE, download dataset
+  if (download) {
+    ## If overwrite = TRUE, download dataset
+    if (overwrite) {                                                      # <2>
+      download.file(url = url, destfile = destfile)
+    } else {
+    ## If overwrite = FALSE, check if destfile exists before downloading
+      if (!file.exists(destfile)) {                                       # <3>
+        download.file(url = url, destfile = destfile)
+      }
+    }
+  } else {
+  ## If download = FALSE, set destfile as url link
+    destfile <- url
+  }
+
+  ## Read dataset
+  read.table(file = destfile, header = TRUE, sep = " ")
+}
+```
+
+1. Use `overwrite` argument that takes on logical (TRUE or FALSE) value so that user can specify whether they want the function to overwrite an existing file specified by `destfile`.
+
+2. If `download = TRUE` and `overwrite = TRUE`, download of the dataset is performed regardless of whether it is already present.
+
+3. If `download = TRUE` and `overwrite = FALSE` (default), a check is performed whether the file path specified in `destfile` exists. If it doesn't exist, then download of the dataset is performed. If the file exists, then dataset is not downloaded.
+
+We can now test whether the function works as expected. From the earlier example, we have the previous download of the `ba.dat` file and then ran the previous function with `download = FALSE`. So, no `ba.dat` file is currently found in the `data` directory. To test whether `overwrite = FALSE` works, we use the updated function as follows
+
+```{r}
+#| label: download-read-function3-syntax1
+#| eval: FALSE
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, #<1>
+  destfile = "data/ba.dat",
+  overwrite = FALSE
+)
+```
+
+and then we get:
+
+```{r}
+#| label: download-read-function3-show1
+#| echo: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, #<1>
+  destfile = "data/ba.dat",
+  overwrite = FALSE
+)
+```
+
+We get the data read into R and then we expect that the download process happened because `download = TRUE` even though `overwrite = FALSE` because the `ba.dat` file is not present in `data` directory. We check this by
+
+```{r}
+#| label: download-read-function3-test1
+
+file.exists("data/ba.dat")
+```
+
+The `ba.dat` file was found in the `data` directory of the project.
+
+Now that the `ba.dat` file is back in the `data` directory, we can test the `overwrite = FALSE` argument again. We expect that the `read_ba_data()` will not re-download the `ba.dat` dataset. Instead, it will just read what is already available in the `data` directory.
+
+```{r}
+#| label: download-read-function3-syntax2
+#| eval: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, #<1>
+  destfile = "data/ba.dat",
+  overwrite = FALSE
+)
+```
+
+We get the data read into R and during the running of the code, we notice that no console message relating to download were showing with the whole process taking relatively quicker than earlier.
+
+```{r}
+#| label: download-read-function3-test2
+#| echo: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, #<1>
+  destfile = "data/ba.dat",
+  overwrite = FALSE
+)
+```
+
+Then we can test the `overwrite = TRUE` argument. We expect that the `read_ba_data()` will download the `ba.dat` dataset regardless of whether the `ba.dat` is found in the `data` directory.
+
+```{r}
+#| label: download-read-function3-syntax3
+#| eval: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, # <1>
+  destfile = "data/ba.dat",
+  overwrite = TRUE
+)
+```
+
+We get the data read into R and during the running of the code, we notice that on the console we see messages relating to the download process were showing (see console output [-@lst-download-read-function3-test2-console-output]) with the whole process taking relatively longer than earlier.
+
+::: {#lst-download-read-function3-test2-console-output lst-cap="Console output showing downloading process ongoing"}
+
+
+```{md}
+trying URL 'https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat'
+Content type 'text/plain; charset=utf-8' length 166 bytes
+==================================================
+downloaded 166 bytes
+```
+
+:::
+
+```{r}
+#| label: download-read-function3-test3
+#| echo: false
+
+read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  download = TRUE, # <1>
+  destfile = "data/ba.dat",
+  overwrite = TRUE
+)
+```
+
+The updated `read_ba_data()` function is working as expected. We use it to create a data object called `ba_data`.
+
+```{r}
+#| label: create-ba-data-object
+#| echo: true
+
+ba_data <- read_ba_data(
+  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
+  destfile = "data/ba.dat"
+)
+```
+
+which results in:
+
+```{r}
+#| label: create-ba-data-object-show
+
+ba_data
+```
+
+# Task 2: Calculate the metrics needed for a Bland and Altman plot {#sec-ba-metrics}
+
+The different metrics used to consruct a Bland and Altman plot are:
+
+* Mean of the per subject measurements made by the Wright and the Mini-Wright;
+
+* Difference between the per subject measurements made by the Wright and the Mini-Wright;
+
+* Mean of the difference between the per subject measurements made by the Wright and the Mini-Wright; and,
+
+* Lower and upper limits of agreement between the per subject measurements made by the Wright and the Mini-Wright.
+
+We can approach this task in five different ways.
+
+## Function to calculate Bland and Altman metrics - vectorised approach {#sec-ba-metrics-vectorised}
+
+The vectorised approach calculates each metric as vectors[^2] and then concatenates them into a list[^3]. The following function shows this approach:
+
+```{r}
+#| label: calculate-metrics1-function1
+#| eval: true
+
+calculate_ba_metrics <- function(ba_data) {                 # <1>
+  ## Get per row mean of measurements
+  mean_values <- (ba_data$Wright + ba_data$Mini) / 2        # <2>
+
+  ## Get per row difference of measurements
+  differences <- ba_data$Wright - ba_data$Mini              # <3>
+
+  ## Mean of the differences of measurements
+  mean_differences <- mean(differences)                      # <4>
+
+  ## Upper and lower limits of agreement
+  upper_limit <- mean_differences + 1.96 * sd(differences)   # <5>
+  lower_limit <- mean_differences - 1.96 * sd(differences)   # <5>
+
+  ## Concatenate metrics into a named list
+  list(                                                     # <6>
+    mean_values = mean_values,
+    differences = differences,
+    mean_differences = mean_differences,
+    upper_limit = upper_limit,
+    lower_limit = lower_limit
+  )
+}
+```
+
+1. Name the function `calculate_ba_metrics()` and use an argument `ba_data` which is the data.frame of the dataset we downloaded and read in the first task.
+
+2. Calculate the per row mean of the two measurements and assign it to the `mean_values` object.
+
+3. Calculate the per row difference between the two measurements and assign it to the `differences` object.
+
+4. Calculate the mean of the per row differences and assign it to the `mean differences` object.
+
+5. Calculate the upper and lower limits of agreement and assign them to the `upper_limit` and `lower_limit` objects respectively.
+
+6. Concatenate all the calculated values into a named list.
+
+We use this function as follows:
+
+```{r}
+#| label: calculate-metrics1-syntax1
+#| eval: false
+
+calculate_ba_metrics(ba_data)
+```
+
+which gives the following output:
+
+```{r}
+#| label: calculate-metrics1-show1
+#| echo: false
+
+calculate_ba_metrics(ba_data)
+```
+
+We see the named list structure of the output with the `mean_values` and the `differences` being vectors whilst the rest of the metrics are single values.
+
+## Function to calculate Bland and Altman metrics - data.frame approach {#sec-ba-metrics-dataframe}
+
+The data.frame approach outputs each metric as vectors and concatenates them into the input dataset. The function using this approach can look like this:
+
+```{r}
+#| label: calculate-metrics1-function2
+
+calculate_ba_metrics <- function(ba_data) {
+  ## Get per row mean of measurements and add to ba_data
+  ba_data$mean_values <- (ba_data$Wright + ba_data$Mini) / 2   # <1>
+
+  ## Get per row difference of measurements and add to ba_data
+  ba_data$differences <- ba_data$Wright - ba_data$Mini         # <2>
+
+  ## Mean of the differences of measurements
+  ba_data$mean_differences <- mean(ba_data$differences)        # <3>
+
+  ## Upper and lower limits of agreement
+  ba_data$upper_limit <- ba_data$mean_differences + 1.96 *     # <4>
+    sd(ba_data$differences)
+  ba_data$lower_limit <- ba_data$mean_differences - 1.96 * 
+    sd(ba_data$differences)
+
+  ## Return ba_data
+  ba_data
+}
+```
+
+1. The per row mean of measurements are calculated and added as a new column in the input dataset.
+
+2. The per row difference in measurements are calculated and added as a new column in the input dataset.
+
+3. The mean of the difference in measurements is calculated and added as a new column in the input dataset. Because this value is a single value, it is repeated per row of the input data.
+
+4. The upper and lower limits of agreement in measurements are calculated and are each added as new columns in the input dataset. Because these values correspond to single values, they are repeated per row of the input data.
+
+We use this function as follows:
+
+```{r}
+#| label: calculate-metrics1-syntax2
+#| eval: false
+
+calculate_ba_metrics(ba_data)
+```
+
+which gives the following output:
+
+```{r}
+#| label: calculate-metrics1-show2
+#| echo: false
+
+calculate_ba_metrics(ba_data)
+```
+
+We see the `data.frame` structure of the output with new columns/variables for each of the calculated metric and the repeated per row values for the `mean_differences`, `upper_limit`, and `lower_limit`.
+
+## Function to calculate Bland and Altman metrics - combined approach {#sec-ba-metrics-combined}
+
+The structure of the output (either `list` or `data.frame`) each has their pros and cons. A `list` structure is relatively more flexible and can be transformed in many ways whilst the `data.frame` structure is ideal for use in functions that require a `data.frame` input (i.e., `ggplot2` for plotting). With this in mind, a combined approach that gives users an option between a vectorised or a data.frame approach can be useful and have a broader and more generalised usage.
+
+This function can be implemented as follows:
+
+```{r}
+#| label: calculate-metrics1-function3
+
+calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {  # <1>
+  type <- match.arg(type)                                            # <2>
+
+  mean_values <- (ba_data$Wright + ba_data$Mini) / 2                 # <3>
+  differences <- ba_data$Wright - ba_data$Mini                       # <3>
+  mean_differences <- mean(differences)                              # <3>
+  upper_limit <- mean_differences + 1.96 * sd(differences)           # <3>
+  lower_limit <- mean_differences - 1.96 * sd(differences)           # <3>
+
+  if (type == "list") {                                              # <4>
+    list(
+      mean_values = mean_values,
+      differences = differences,
+      mean_differences = mean_differences,
+      upper_limit = upper_limit,
+      lower_limit = lower_limit
+    )
+  } else {
+    data.frame(
+      ba_data, mean_values, differences, mean_differences, 
+      upper_limit, lower_limit
+    )
+  }
+}
+```
+
+1. Use an argument called `type` which can be specified as either `list` or `df` (short for `data.frame`).
+
+2. The function `match.arg()` matches the input value for `type` to the choices allowed and checks whether it is specified correctly. If `type` not specified, `match.arg()` uses the first value (`list`) as the default.
+
+3. Calculate each of the metrics like before.
+
+4. Based on what `type` is, the metrics are concatenated into a `list` or into a `data.frame`.
+
+We use this function as follows to output a `list`:
+
+```{r}
+#| label: calculate-metrics1-syntax3
+#| eval: false
+
+calculate_ba_metrics(ba_data)
+```
+
+which gives the following output:
+
+```{r}
+#| label: calculate-metrics1-show3
+#| echo: false
+
+calculate_ba_metrics(ba_data)
+```
+
+We use this function as follows to output a `data.frame`:
+
+```{r}
+#| label: calculate-metrics1-syntax4
+#| eval: false
+
+calculate_ba_metrics(ba_data, type = "df")
+```
+
+which gives the following output:
+
+```{r}
+#| label: calculate-metrics1-show4
+#| echo: false
+
+calculate_ba_metrics(ba_data, type = "df")
+```
+
+## Function to calculate Bland and Altman metrics - modular approach {#sec-ba-metrics-modular}
+
+The modular approach creates multiple functions that calculates each component metric of the Bland and Altman plot and then assembles them into one overall function. An example of how these functions might look like is shown below:
+
+```{r}
+#| label: calculate-metrics-syntax5
+
+calculate_mean_values <- function(m1, m2) { (m1 + m2) / 2 }
+
+calculate_diff_values <- function(m1, m2) { m1 - m2 }
+
+calculate_mean_diff <- function(m1, m2) {
+  mean(calculate_diff_values(m1 = m1, m2 = m2))
+}
+
+calculate_diff_limits <- function(m1, m2) {
+  differences <- calculate_diff_values(m1 = m1, m2 = m2)
+  mean_differences <- calculate_mean_diff(m1 = m1, m2 = m2)
+
+  upper_limit <- mean_differences + 1.96 * sd(differences)
+  lower_limit <- mean_differences - 1.96 * sd(differences)
+
+  c(upper_limit, lower_limit)
+}
+
+calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
+  type <- match.arg(type)
+
+  mean_values <- calculate_mean_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
+  differences <- calculate_diff_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
+  mean_differences <- calculate_mean_diff(m1 = ba_data$Wright, m2 = ba_data$Mini)
+  limits <- calculate_diff_limits(m1 = ba_data$Wright, m2 = ba_data$Mini)
+
+  if (type == "list") {
+    list(
+      mean_values = mean_values,
+      differences = differences,
+      mean_differences = mean_differences,
+      upper_limit = limits[1],
+      lower_limit = limits[2]
+    )
+  } else {
+    data.frame(
+      ba_data, mean_values, differences, mean_differences,
+      upper_limit, lower_limit
+    )
+  }
+}
+
+```
+
+# Task 3: Create a Bland and Altman plot {#sec-ba-plot}
+
+Develop a function that creates a Bland and Altman plot as described in the article.
+
+
+
+[^1]: This dataset is a teaching dataset and is provided by Bland and Altman in their paper. It is very reasonable to expect that no changes will happen to this dataset in the future.
+
+[^2]: A vector is essentially a collection of elements of the same data type, arranged in a one-dimensional array.
+
+[^3]: A list is a data structure that can store elements of different types. Unlike vectors, which are homogenous (all elements must be of the same type), lists are heterogeneous and can hold elements such as numbers, strings, vectors, other lists, and even functions.

@@ -3,6 +3,7 @@
 <!-- badges: start -->
 ![License for code](https://img.shields.io/badge/license_for_code-GPL3.0-blue)
 ![License for text](https://img.shields.io/badge/license_for_writing-CC_BY_4.0-blue)
+[![DOI](https://zenodo.org/badge/894987070.svg)](https://zenodo.org/badge/latestdoi/894987070)
 <!-- badges: end -->
 
 

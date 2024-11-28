@@ -94,11 +94,11 @@ calculate_ba_metrics <- function(ba_data) {
   differences <- ba_data$Wright - ba_data$Mini
 
   ## Mean of the differences of measurements
-  mean_difference <- mean(differences)
+  mean_differences <- mean(differences)
 
   ## Upper and lower limits of agreement
-  upper_limit <- mean_difference + 1.96 * sd(differences)
-  lower_limit <- mean_difference - 1.96 * sd(differences)
+  upper_limit <- mean_differences + 1.96 * sd(differences)
+  lower_limit <- mean_differences - 1.96 * sd(differences)
 
   ## Concatenate metrics into a named list
   list(
@@ -146,9 +146,9 @@ calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
 
   mean_values <- (ba_data$Wright + ba_data$Mini) / 2
   differences <- ba_data$Wright - ba_data$Mini
-  mean_differences <- mean(ba_data$differences)
-  upper_limit <- ba_data$mean_differences + 1.96 * sd(ba_data$differences)
-  lower_limit <- ba_data$mean_differences - 1.96 * sd(ba_data$differences)
+  mean_differences <- mean(differences)
+  upper_limit <- mean_differences + 1.96 * sd(differences)
+  lower_limit <- mean_differences - 1.96 * sd(differences)
 
   if (type == "list") {
     list(
