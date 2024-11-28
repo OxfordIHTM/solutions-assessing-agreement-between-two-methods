@@ -1,4 +1,4 @@
-# Statistical methods for assessing agreement between two methods of clinical measurement
+# Statistical methods for assessing agreement between two methods of clinical measurement - Solutions
 
 <!-- badges: start -->
 ![License for code](https://img.shields.io/badge/license_for_code-GPL3.0-blue)
