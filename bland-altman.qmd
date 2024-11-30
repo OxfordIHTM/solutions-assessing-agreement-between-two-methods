@@ -10,6 +10,18 @@ author:
         city: Oxford
 date: last-modified
 date-format: "DD MMMM YYYY"
+crossref:
+  custom:
+    - key: fxn
+      kind: float
+      reference-prefix: Function
+      caption-prefix: Function
+      latex-env: fxn
+    - key: con
+      kind: float
+      reference-prefix: Console output
+      caption-prefix: Console output
+      latex-env: con
 ---
 
 This document provides detailed solutions to the tasks set in the **Statistical methods for assessing agreement between two methods of clinical measurement** exercise set of the [**Open and Reproducible Science in R**](https://oxford-ihtm.io/teaching/) module of the [**MSc in International Health and Tropical Medicine**](https://www.tropicalmedicine.ox.ac.uk/study-with-us/msc-ihtm).
@@ -55,6 +67,8 @@ download.file(
 
 2. Provide the file path to where the file should be downloaded. The instructions specifically said that this should be downloaded into the `data` directory of the project and for the name, we just use the same name of the data file.
 
+<br/>
+
 The arguments `url` and `destfile` are the minimum required arguments to specify. When you run this line of code, you should expect the `ba.dat` file to be downloaded into the `data` directory. You can check this by issuing the following command on the R console:
 
 ```{r}
@@ -62,6 +76,8 @@ The arguments `url` and `destfile` are the minimum required arguments to specify
 
 list.files("data")
 ```
+
+<br/>
 
 which shows that a file called `ba.dat` can be found inside the `data` directory of this project.
 
@@ -89,6 +105,8 @@ read.table(
 
 3. Specify the value separators used in the dataset being read. The `ba.dat` dataset uses whitespace (`" "`) to separate values. So we specifcy `sep = " "`.
 
+<br/>
+
 When we run this line of code, we get:
 
 ```{r}
@@ -101,6 +119,8 @@ read.table(
   sep = " "
 )
 ```
+
+<br/>
 
 We get a `data.frame` with 17 rows and 2 columns of data.
 
@@ -121,6 +141,8 @@ read.table(
 )
 ```
 
+<br/>
+
 which gives:
 
 ```{r}
@@ -133,6 +155,8 @@ read.table(
   sep = " "
 )
 ```
+
+<br/>
 
 This is the same output as the earlier approach.
 
@@ -157,6 +181,8 @@ read_ba_data <- function(url, destfile) {               # <1>
 
 3. Use the `destfile` argument specification to supply input value to the `read.table()` function. Specifications for `header` and `sep` arguments are hardcoded as it assumes that the `ba.dat` file has a header and uses `" "` as value separator.
 
+<br/>
+
 We can then try this function to see if it gives us the expected outputs.
 
 ```{r}
@@ -168,6 +194,8 @@ read_ba_data(
   destfile = "data/ba.dat"
 )
 ```
+
+<br/>
 
 which produces the following result:
 
@@ -181,6 +209,8 @@ read_ba_data(
 )
 ```
 
+<br/>
+
 The same output is produced as earlier when the dataset was read into R. To check that the download component worked, we check if the `ba.dat` dataset is in the `data` directory of the project.
 
 ```{r}
@@ -188,6 +218,8 @@ The same output is produced as earlier when the dataset was read into R. To chec
 
 list.files("data")
 ```
+
+<br/>
 
 The `ba.dat` file is in the `data` directory. The `read_ba_data()` function works as expected.
 
@@ -222,6 +254,8 @@ read_ba_data <- function(url,
 
 3. If the `download` conditions is FALSE, then the `destfile` argument is specified with the `url` value so that the dataset is read directly from the `url`.
 
+<br/>
+
 To test that this updated `read_ba_data()` function works as expected, we first remove the `ba.dat` file that we have already downloaded earlier by using the following commands in the R console:
 
 ```{r}
@@ -230,6 +264,8 @@ To test that this updated `read_ba_data()` function works as expected, we first 
 file.remove("data/ba.dat")
 ```
 
+<br/>
+
 Then, we check whether it has indeed been removed:
 
 ```{r}
@@ -237,6 +273,8 @@ Then, we check whether it has indeed been removed:
 
 file.exists("data/ba.dat")
 ```
+
+<br/>
 
 The `ba.dat` file doesn't exist in the `data` directory.
 
@@ -255,6 +293,8 @@ read_ba_data(
 
 1. Set `download = FALSE` so that `ba.dat` is read directly into R without downloading. Since no download of data will be performed, there is no need to specify the `destfile` argument.
 
+<br/>
+
 This code outputs the following:
 
 ```{r}
@@ -267,6 +307,8 @@ read_ba_data(
 )
 ```
 
+<br/>
+
 which is the same output as the earlier function.
 
 We then test whether or not the `ba.dat` file is present in the `data` directory. Our expectation is that the `ba.dat` file is not to be found there. We test as follows:
@@ -276,6 +318,8 @@ We then test whether or not the `ba.dat` file is present in the `data` directory
 
 file.exists("data/ba.dat")
 ```
+
+<br/>
 
 The `ba.dat` file is not found in the `data` directory. The updated `read_ba_data()` function works as expected.
 
@@ -319,6 +363,8 @@ read_ba_data <- function(url,
 
 3. If `download = TRUE` and `overwrite = FALSE` (default), a check is performed whether the file path specified in `destfile` exists. If it doesn't exist, then download of the dataset is performed. If the file exists, then dataset is not downloaded.
 
+<br/>
+
 We can now test whether the function works as expected. From the earlier example, we have the previous download of the `ba.dat` file and then ran the previous function with `download = FALSE`. So, no `ba.dat` file is currently found in the `data` directory. To test whether `overwrite = FALSE` works, we use the updated function as follows
 
 ```{r}
@@ -332,6 +378,8 @@ read_ba_data(
   overwrite = FALSE
 )
 ```
+
+<br/>
 
 and then we get:
 
@@ -347,6 +395,8 @@ read_ba_data(
 )
 ```
 
+<br/>
+
 We get the data read into R and then we expect that the download process happened because `download = TRUE` even though `overwrite = FALSE` because the `ba.dat` file is not present in `data` directory. We check this by
 
 ```{r}
@@ -354,6 +404,8 @@ We get the data read into R and then we expect that the download process happene
 
 file.exists("data/ba.dat")
 ```
+
+<br/>
 
 The `ba.dat` file was found in the `data` directory of the project.
 
@@ -371,6 +423,8 @@ read_ba_data(
 )
 ```
 
+<br/>
+
 We get the data read into R and during the running of the code, we notice that no console message relating to download were showing with the whole process taking relatively quicker than earlier.
 
 ```{r}
@@ -385,11 +439,13 @@ read_ba_data(
 )
 ```
 
+<br/>
+
 Then we can test the `overwrite = TRUE` argument. We expect that the `read_ba_data()` will download the `ba.dat` dataset regardless of whether the `ba.dat` is found in the `data` directory.
 
 ```{r}
 #| label: download-read-function3-syntax3
-#| eval: false
+#| eval: true
 
 read_ba_data(
   url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
@@ -399,12 +455,14 @@ read_ba_data(
 )
 ```
 
-We get the data read into R and during the running of the code, we notice that on the console we see messages relating to the download process were showing (see console output [-@lst-download-read-function3-test2-console-output]) with the whole process taking relatively longer than earlier.
+<br/>
 
-::: {#lst-download-read-function3-test2-console-output lst-cap="Console output showing downloading process ongoing"}
+We get the data read into R and during the running of the code, we notice that on the console we see messages relating to the download process were showing (see @con-download-read-function3-test2-console-output) with the whole process taking relatively longer than earlier.
+
+::: {#con-download-read-function3-test2-console-output con-cap="Showing downloading process ongoing"}
 
 
-```{md}
+```{.md}
 trying URL 'https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat'
 Content type 'text/plain; charset=utf-8' length 166 bytes
 ==================================================
@@ -413,17 +471,7 @@ downloaded 166 bytes
 
 :::
 
-```{r}
-#| label: download-read-function3-test3
-#| echo: false
-
-read_ba_data(
-  url = "https://raw.githubusercontent.com/OxfordIHTM/teaching_datasets/main/ba.dat",
-  download = TRUE, # <1>
-  destfile = "data/ba.dat",
-  overwrite = TRUE
-)
-```
+<br/>
 
 The updated `read_ba_data()` function is working as expected. We use it to create a data object called `ba_data`.
 
@@ -437,6 +485,8 @@ ba_data <- read_ba_data(
 )
 ```
 
+<br/>
+
 which results in:
 
 ```{r}
@@ -447,7 +497,7 @@ ba_data
 
 # Task 2: Calculate the metrics needed for a Bland and Altman plot {#sec-ba-metrics}
 
-The different metrics used to consruct a Bland and Altman plot are:
+The different metrics used to construct a Bland and Altman plot are:
 
 * Mean of the per subject measurements made by the Wright and the Mini-Wright;
 
@@ -504,6 +554,8 @@ calculate_ba_metrics <- function(ba_data) {                 # <1>
 
 6. Concatenate all the calculated values into a named list.
 
+<br/>
+
 We use this function as follows:
 
 ```{r}
@@ -513,6 +565,8 @@ We use this function as follows:
 calculate_ba_metrics(ba_data)
 ```
 
+<br/>
+
 which gives the following output:
 
 ```{r}
@@ -521,6 +575,8 @@ which gives the following output:
 
 calculate_ba_metrics(ba_data)
 ```
+
+<br/>
 
 We see the named list structure of the output with the `mean_values` and the `differences` being vectors whilst the rest of the metrics are single values.
 
@@ -544,7 +600,7 @@ calculate_ba_metrics <- function(ba_data) {
   ## Upper and lower limits of agreement
   ba_data$upper_limit <- ba_data$mean_differences + 1.96 *     # <4>
     sd(ba_data$differences)
-  ba_data$lower_limit <- ba_data$mean_differences - 1.96 * 
+  ba_data$lower_limit <- ba_data$mean_differences - 1.96 *     # <4>
     sd(ba_data$differences)
 
   ## Return ba_data
@@ -560,6 +616,8 @@ calculate_ba_metrics <- function(ba_data) {
 
 4. The upper and lower limits of agreement in measurements are calculated and are each added as new columns in the input dataset. Because these values correspond to single values, they are repeated per row of the input data.
 
+<br/>
+
 We use this function as follows:
 
 ```{r}
@@ -569,6 +627,8 @@ We use this function as follows:
 calculate_ba_metrics(ba_data)
 ```
 
+<br/>
+
 which gives the following output:
 
 ```{r}
@@ -577,6 +637,8 @@ which gives the following output:
 
 calculate_ba_metrics(ba_data)
 ```
+
+<br/>
 
 We see the `data.frame` structure of the output with new columns/variables for each of the calculated metric and the repeated per row values for the `mean_differences`, `upper_limit`, and `lower_limit`.
 
@@ -623,6 +685,8 @@ calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {  # <1>
 
 4. Based on what `type` is, the metrics are concatenated into a `list` or into a `data.frame`.
 
+<br/>
+
 We use this function as follows to output a `list`:
 
 ```{r}
@@ -631,6 +695,8 @@ We use this function as follows to output a `list`:
 
 calculate_ba_metrics(ba_data)
 ```
+
+<br/>
 
 which gives the following output:
 
@@ -641,6 +707,8 @@ which gives the following output:
 calculate_ba_metrics(ba_data)
 ```
 
+<br/>
+
 We use this function as follows to output a `data.frame`:
 
 ```{r}
@@ -649,6 +717,8 @@ We use this function as follows to output a `data.frame`:
 
 calculate_ba_metrics(ba_data, type = "df")
 ```
+
+<br/>
 
 which gives the following output:
 
@@ -661,36 +731,85 @@ calculate_ba_metrics(ba_data, type = "df")
 
 ## Function to calculate Bland and Altman metrics - modular approach {#sec-ba-metrics-modular}
 
-The modular approach creates multiple functions that calculates each component metric of the Bland and Altman plot and then assembles them into one overall function. An example of how these functions might look like is shown below:
+The modular approach creates multiple functions that calculates each component metric of the Bland and Altman plot and then assembles them into one overall function. [@fxn-calculate-metrics-syntax5a; @fxn-calculate-metrics-syntax5b; @fxn-calculate-metrics-syntax5c; @fxn-calculate-metrics-syntax5d] each calculate one of the metrics needed for the Bland and Altman plot.
+
+
+::: {#fxn-calculate-metrics-syntax5a}
+```{r}
+calculate_mean_values <- function(ba_data) {
+  (ba_data$Wright + ba_data$Mini) / 2 
+}
+```
+
+Calculate per row mean of measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax5b}
+
 
 ```{r}
-#| label: calculate-metrics-syntax5
-
-calculate_mean_values <- function(m1, m2) { (m1 + m2) / 2 }
-
-calculate_diff_values <- function(m1, m2) { m1 - m2 }
-
-calculate_mean_diff <- function(m1, m2) {
-  mean(calculate_diff_values(m1 = m1, m2 = m2))
+calculate_diff_values <- function(ba_data) { 
+  ba_data$Wright - ba_data$Mini 
 }
+```
 
-calculate_diff_limits <- function(m1, m2) {
-  differences <- calculate_diff_values(m1 = m1, m2 = m2)
-  mean_differences <- calculate_mean_diff(m1 = m1, m2 = m2)
+Calculate per row difference of measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax5c}
+
+```{r}
+calculate_mean_diff <- function(ba_data) {
+  mean(calculate_diff_values(ba_data))
+}
+```
+
+Calculate the mean of differences of the measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax5d}
+```{r}
+calculate_diff_limits <- function(ba_data) {
+  differences <- calculate_diff_values(ba_data)
+  mean_differences <- calculate_mean_diff(ba_data)
 
   upper_limit <- mean_differences + 1.96 * sd(differences)
   lower_limit <- mean_differences - 1.96 * sd(differences)
 
   c(upper_limit, lower_limit)
 }
+```
+
+Calculate the upper and lower limits of agreement
+
+:::
+
+<br/>
+
+Each of these functions require the same arguments: `m1` which is a vector of numeric values for the first measurement and `m2` which is a vector of numeric values for the second measurement. @fxn-calculate-metrics-syntax5a and @fxn-calculate-metrics-syntax5b are very simple functions performing basic row-wise vectorised operations. @fxn-calculate-metrics-syntax5c and @fxn-calculate-metrics-syntax5d use the first 2 functions to perform the calculations.
+
+Then, using all these four functions, @fxn-calculate-metrics-syntax5e calculates all the Bland and Altman metrics and provides the option for the user to output a `list` or a `data.frame`.
+
+::: {#fxn-calculate-metrics-syntax5e}
+
+```{r}
 
 calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
   type <- match.arg(type)
 
-  mean_values <- calculate_mean_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  differences <- calculate_diff_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  mean_differences <- calculate_mean_diff(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  limits <- calculate_diff_limits(m1 = ba_data$Wright, m2 = ba_data$Mini)
+  mean_values <- calculate_mean_values(ba_data)
+  differences <- calculate_diff_values(ba_data)
+  mean_differences <- calculate_mean_diff(ba_data)
+  limits <- calculate_diff_limits(ba_data)
 
   if (type == "list") {
     list(
@@ -703,18 +822,556 @@ calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
   } else {
     data.frame(
       ba_data, mean_values, differences, mean_differences,
-      upper_limit, lower_limit
+      upper_limit = limits[1], lower_limit = limits[2]
+    )
+  }
+}
+```
+
+Calculate all the Bland and Altman metrics
+
+:::
+
+<br/>
+
+We can apply this overall function as follows:
+
+```{r}
+#| label: calculate-metrics-function4a
+#| eval: false
+
+calculate_ba_metrics(ba_data)
+```
+
+<br/>
+
+which gives the following output
+
+```{r}
+#| label: calculate-metrics-show4a
+#| echo: false
+
+calculate_ba_metrics(ba_data)
+```
+
+<br/>
+
+To output a `data.frame`, we use the function as follows:
+
+```{r}
+#| label: calculate-metrics-function5a
+#| eval: false
+
+calculate_ba_metrics(ba_data, type = "df")
+```
+
+<br/>
+
+which gives the following output
+
+```{r}
+#| label: calculate-metrics-show5a
+#| echo: false
+
+calculate_ba_metrics(ba_data, type = "df")
+```
+
+
+## Function to calculate Bland and Altman metrics - universal approach {#sec-ba-metrics-universal}
+
+All the above approaches for creating a function to calculate Bland and Altman metrics have been designed specific for the `ba.dat` dataset. What this means is that the functions work appropriately but only for a dataset that has variables called ***"Wright"*** and ***"Mini"***. Hence, these functions will be useful for this specific exercise only. Once you have a dataset with two values of measurements similar to the `ba.dat` dataset which, in theory, can be analysed using the Bland and Altman method, these functions cannot be used for that dataset.
+
+It would be ideal that we try to make this function as universally applicable as possible such that it can be used with any dataset that has data to which the Bland and Altman method can be applied to. This will make the function usable beyond just this exercise.
+
+It is relatively easy to improve our current function to make it universal. Instead of making the function require a specific `data.frame` input as its main argument, we can instead make the function require vectors of values for the first and second measurements instead as its arguments. This is demonstrated by the functions below.
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax6a}
+```{r}
+calculate_mean_values <- function(m1, m2) {
+  (m1 + m2) / 2 
+}
+```
+
+Calculate per row mean of measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax6b}
+
+
+```{r}
+calculate_diff_values <- function(m1, m2) { 
+  m1 - m2 
+}
+```
+
+Calculate per row difference of measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax6c}
+
+```{r}
+calculate_mean_diff <- function(m1, m2) {
+  mean(calculate_diff_values(m1 = m1, m2 = m2))
+}
+```
+
+Calculate the mean of differences of the measurements
+
+:::
+
+<br/>
+
+::: {#fxn-calculate-metrics-syntax6d}
+```{r}
+calculate_diff_limits <- function(m1, m2) {
+  differences <- calculate_diff_values(m1 = m1, m2 = m2)
+  mean_differences <- calculate_mean_diff(m1 = m1, m2 = m2)
+
+  upper_limit <- mean_differences + 1.96 * sd(differences)
+  lower_limit <- mean_differences - 1.96 * sd(differences)
+
+  c(upper_limit, lower_limit)
+}
+```
+
+Calculate the upper and lower limits of agreement
+
+:::
+
+<br/>
+
+[@fxn-calculate-metrics-syntax6a; @fxn-calculate-metrics-syntax6b; @fxn-calculate-metrics-syntax6c; @fxn-calculate-metrics-syntax6d] are variations of the earlier per metric functions. Instead of a `data.frame` as the required input, we use two arguments `m1` and `m2` for vectors of values for the first and second measurements respectively. This is a very minor adjustment but it makes a big difference in making the functions more universal. By doing this, we let the user decide the kind of input to provide to the function based on their data.
+
+Now, for the final overall function shown below, we set an argument for a data.frame input that contains measurements values that can be analysed using the Bland and Altman approach and then a further two arguments for the names of the variables for the first and second measurements that are being assessed.
+
+```{r}
+#| label: calculate-metrics-syntax6e
+
+calculate_ba_metrics <- function(df,                         # <1>
+                                 m1, m2,                     # <2> 
+                                 type = c("list", "df")) {
+  type <- match.arg(type)
+
+  m1 <- df[ , m1]
+  m2 <- df[ , m2]
+
+  mean_values <- calculate_mean_values(m1 = m1, m2 = m2)
+  differences <- calculate_diff_values(m1 = m1, m2 = m2)
+  mean_differences <- calculate_mean_diff(m1 = m1, m2 = m2)
+  limits <- calculate_diff_limits(m1 = m1, m2 = m2)
+
+  if (type == "list") {
+    list(
+      mean_values = mean_values,
+      differences = differences,
+      mean_differences = mean_differences,
+      upper_limit = limits[1],
+      lower_limit = limits[2]
+    )
+  } else {
+    data.frame(
+      df, mean_values, differences, mean_differences,
+      upper_limit = limits[1], lower_limit = limits[2]
     )
   }
 }
 
 ```
 
+1. A data.frame object containing measurement values that can be analysed using the Bland and Altman approach.
+
+2. Two additional arguments for character values of the names of the variables in the `data.frame` input for the values for the first and second measurements respectively.
+
+<br/>
+
+The overall function can be used as follows:
+
+```{r}
+#| label: calculate-ba-metrics-function6a
+#| eval: false
+
+calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini")
+```
+
+<br/>
+
+which gives the following `list` output
+
+```{r}
+#| label: calculate-ba-metrics-show6a
+#| echo: false
+
+calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini")
+```
+
+<br/>
+
+or
+
+```{r}
+#| label: calculate-ba-metrics-function7a
+#| eval: false
+
+calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini", type = "df")
+```
+
+<br/>
+
+which gives the following `data.frame` output
+
+```{r}
+#| label: calculate-ba-metrics-show7a
+#| echo: false
+
+calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini", type = "df")
+```
+
+We now have a function that we can use for any data that can be analysed using the Bland and Altman method/approach.
+
+We should now create an object called `ba_metrics` to store the output of this function for use in the next step (plotting).
+
+```{r}
+#| label: calculate-ba-metrics
+
+ba_metrics <- calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini")
+```
+
+<br/>
+
+which gives us
+
+```{r}
+#| label: calculate-ba-metrics-show
+
+ba_metrics
+```
+
 # Task 3: Create a Bland and Altman plot {#sec-ba-plot}
 
-Develop a function that creates a Bland and Altman plot as described in the article.
+The Bland and Altman method lends itself for useful graphical representation of outputs. This is why the Bland and Altman plot is commonly used to identify this analytical approach.
+
+The Bland and Altman plot, also known as a ***Tukey mean-difference plot***, is a graphical method used to compare two different measurement techniques or instruments by analyzing the agreement between them. It is commonly used in clinical research and other scientific disciplines where comparing two methods is essential.
+
+## Key Features of the Bland-Altman Plot {#sec-ba-plot-features}
+
+### Axes
+   
+- The **x-axis** represents the mean of the two measurements for each observation.
+   
+- The **y-axis** represents the difference between the two measurements for each observation.
+
+### Data Points
+   
+Each point on the plot corresponds to one observation, showing the relationship between the average measurement and the difference between the two methods.
+
+### Central Line
+
+A horizontal line at the mean difference (**bias**) indicates the average level of disagreement between the two methods.
+
+### Limits of Agreement (LoA)
+
+Two horizontal lines represent the limits within which most differences between the two methods will fall.
+
+These limits approximate a 95% confidence interval for the differences.
+
+## Interpretation
+
+- If the differences cluster around zero and within the limits of agreement, the two methods are considered to agree well.
+   
+- Systematic bias is indicated by a consistent deviation from zero.
+
+- A pattern in the differences (e.g., increasing or decreasing differences) might suggest proportional bias or other issues with one or both methods.
+
+## Creating a Bland and Altman plot {#sec-ba-plot-task}
+
+### Basic Bland and Altman plot {#sec-ba-plot-basic}
+
+The following code creates a basic Bland and Altman plot:
+
+```{r}
+#| label: create-ba-plot-basic-function
+#| eval: true
+
+plot_ba <- function(ba_metrics) {                               # <1>
+  plot(x = ba_metrics$mean_values, y = ba_metrics$differences)  # <2>
+
+  abline(h = ba_metrics$mean_differences)                       # <3>
+  abline(h = ba_metrics$upper_limit)                            # <3>
+  abline(h = ba_metrics$lower_limit)                            # <3>
+}
+```
+
+1. Use `ba_metrics` output from previous function calculating Bland and Altman metrics.
+
+2. Create a scatter plot using the base `plot()` function in R with the per row mean of measurements in the x-axis and the per row differences of measurements in the y-axis.
+
+3. Create horizontal lines for the mean differences (**bias**), upper, and lower limits of agreement of the plot.
+
+<br/>
+
+We use this function as follows:
+
+```{r}
+#| label: create-ba-plot-basic-syntax
+#| eval: false
+
+plot_ba(ba_metrics)
+```
+
+which produces the following plot (@fig-ba-plot-1):
+
+```{r}
+#| label: fig-ba-plot-1
+#| fig-cap: Bland and Altman plot - basic
+#| echo: false
+
+plot_ba(ba_metrics)
+```
+
+<br/>
+
+In this output plot, we see that no title is given to the plot. The x- and y-axis labels defaults to the input values for the `x` and `y` arguments in the `plot()` function. The horizontal lines for the bias and limits of agreement are solid.
+
+### Bland and Altman plot with labels {#sec-ba-plot-labels}
+
+We can improve the basic plot by adding relevant labels. These are:
+
+* A title for the plot;
+
+* Axis labels for x- and y-axis; and,
+
+* Additional styling and labels for the bias line and the limits of agreement lines.
+
+The following function shows how this can be done:
+
+```{r}
+#| label: create-ba-plot-labels-function
+#| eval: true
+
+plot_ba <- function(ba_metrics, 
+                    title = "Bland and Altman plot",                  # <1>
+                    xlab = NULL, ylab = NULL,                         # <2> 
+                    limits_lab = TRUE) {                              # <3>
+  plot(
+    x = ba_metrics$mean_values, 
+    y = ba_metrics$differences,
+    main = title,                                                     # <4>
+    xlab = xlab, ylab = ylab                                          # <5>
+  )
+
+  abline(h = ba_metrics$mean_differences, lty = 2, lwd = 0.7)         # <6>
+  abline(h = ba_metrics$upper_limit, lty = 2, lwd = 0.7)              # <6>
+  abline(h = ba_metrics$lower_limit, lty = 2, lwd = 0.7)              # <6>
+
+  if (limits_lab) {                                                   # <7>
+    ## Label for mean differences line
+    text(                                                             # <8>
+      x = max(ba_metrics$mean_values), y = ba_metrics$mean_differences, # <8>
+      labels = paste0(                                                  # <8>
+        "Mean difference: ", round(ba_metrics$mean_differences, digits = 1)
+      ),
+      pos = 2, cex = 0.70                                               # <8>
+    )
+
+    ## Label for upper limit of agreement
+    text(                                                               # <8>
+      x = max(ba_metrics$mean_values), y = ba_metrics$upper_limit,      # <8>
+      labels = paste0(                                                  # <8>
+        "Upper limit: ", round(ba_metrics$upper_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70                                               # <8>
+    )
+
+    ## Label for lower limit of agreement
+    text(                                                               # <8>
+      x = max(ba_metrics$mean_values), y = ba_metrics$lower_limit,      # <8>
+      labels = paste0(                                                  # <8>
+        "Lower limit: ", round(ba_metrics$lower_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70                                               # <8>
+    )
+  }
+}
+```
+
+1. Use an argument `title` for the title of the plot. A default title is given which will be used if the user doesn't supply a title value.
+
+2. Use `xlab` and `ylab` arguments for the x- and y-axis labels respectively. This is set to `NULL` by default. If user doesn't supply values for these arguments, the function will use the default labels used in the `plot()` function.
+
+3. Use `limits_lab` argument which takes a logical (TRUE or FALSE) input. If TRUE (default), then labels for the bias, upper, and lower limits of agreement will be added to the plot. If FALSE, no labels will be added.
+
+4. The value supplied to the `title` argument is used in the `main` argument of the `plot()` function.
+
+5. The values supplied to `xlab` and `ylab` arguments are used in the `xlab` and `ylab` arguments of the `plot()` function.
+
+6. The lines for the bias and the limits of agreement are stylised into dashed lines by setting the `lty` argument of the `abline()` function to ***2*** which will use a dashed line. The lines are also made a little bit thinner by specifying a value of ***0.7*** to the `lwd` argument of the `abline()` function. This style is used to the lines so that when the labels are added onto the lines, the label will be more visible and the lines blend more to the background.
+
+7. Create a condition using the `if` function that will check whether the `limits_lab` is TRUE or FALSE which will create the labels for the lines if TRUE.
+
+8. If `limits_lab` is TRUE, then the bias and limits of agreement lines are created using the `text()` function. The labels are positioned to the left (`pos = 2`) of the maximum value of the mean values of the measurements (`x`) and at the values of the bias, upper, and lower limits of agreement (`y` respectively). The label for the text identifies what the line represents and the value it represents. The text is given a character expansion (`cex`) of ***0.7***. 
+
+<br/>
+
+We can use this function as follows:
+
+```{r}
+#| label: create-ba-plot-labels-syntax
+#| eval: false
+
+plot_ba(
+  ba_metrics, 
+  title = "Wright vs Mini-Wright",
+  xlab = "Mean PEFR (per subject)",
+  ylab = "Difference in PEFR (per subject)"  
+)
+```
+
+which outputs this plot (see @fig-ba-plot-2):
+
+```{r}
+#| label: fig-ba-plot-2
+#| fig-cap: Bland and Altman plot with customised labels
+#| echo: false
+
+plot_ba(
+  ba_metrics, 
+  title = "Wright vs Mini-Wright",
+  xlab = "Mean PEFR (per subject)",
+  ylab = "Difference in PEFR (per subject)"  
+)
+```
+
+<br/>
+
+The output plot has a customised title, the x- and y-axis have appropriate and informative labels, the bias line and the limit of agreement lines are styled appropriately and labeled more informatively.
+
+### Bland and Altman plot with colours and additional styling {#sec-ba-plot-colours}
+
+We can further improve on the labeled version of the plot added styling and colour to the points of the scatter plot.
+
+The points of the scatter plot use default points style of a hollow point in black outline. We can add styling and colour with this version of the function:
+
+```{r}
+#| label: create-ba-plot-colour-function
+
+plot_ba <- function(ba_metrics, 
+                    title = "Bland and Altman plot",
+                    xlab = NULL, ylab = NULL, limits_lab = TRUE,
+                    pch = NULL, col = NULL, bg = NULL, cex = NULL) {    # <1>
+  plot(
+    x = ba_metrics$mean_values, 
+    y = ba_metrics$differences,
+    main = title,
+    xlab = xlab, ylab = NULL,
+    pch = pch,                                                          # <2>
+    col = ifelse(is.null(col), "black", col),                           # <3>
+    bg = bg,                                                            # <4>
+    cex = cex                                                           # <5>
+  )
+
+  abline(h = ba_metrics$mean_differences, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$upper_limit, lty = 2, lwd = 0.7)
+  abline(h = ba_metrics$lower_limit, lty = 2, lwd = 0.7)
+
+  if (limits_lab) {
+    ## Label for mean differences line
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$mean_differences, 
+      labels = paste0(
+        "Mean difference: ", round(ba_metrics$mean_differences, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for upper limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$upper_limit, 
+      labels = paste0(
+        "Upper limit: ", round(ba_metrics$upper_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+
+    ## Label for lower limit of agreement
+    text(
+      x = max(ba_metrics$mean_values), y = ba_metrics$lower_limit, 
+      labels = paste0(
+        "Lower limit: ", round(ba_metrics$lower_limit, digits = 1)
+      ),
+      pos = 2, cex = 0.70
+    )
+  }
+}
+```
+
+1. Use `pch`, `col`, `bg`, and `cex` arguments for the function to style and colour the points of the plot.
+
+2. Use `pch` argument to specify an integer value for the character type to use for the points of the plot. See `?pch` for details. Default is NULL which will use default `pch` value used by R (which is ***1*** for a hollow circle).
+
+3. Use `col` argument to provide a colour specification to use for colouring the points in the scatter plot. Default is NULL which sets the colour to default colour used by R (***black***). Note that for hollow points (`pch` from 0 to 14) and for points with a fill element (`pch` from 21 to 25), `col` will colour the outline of the point. For `pch` values from 15 to 19, `col` will colour the whole point. To colour the fill element of points specified by `pch` from 21 to 25, see `bg` argument.
+
+4. Use `bg` argument to provide a colour specification to use for colouring the fill element of points with a fill element (`pch` from 21 to 25). Default is NULL which sets the fill element to a ***light gray***.
+
+5. Use `cex` argument to provide a character expansion numeric value for the points of the scatter plot. Default is NULL which will use the default size of points used by R which is a value of ***1***.
+
+<br/>
+
+We can use this function as follows:
+
+```{r}
+#| label: create-ba-plot-colours-syntax
+#| eval: false
+
+plot_ba(
+  ba_metrics, 
+  title = "Wright vs Mini-Wright",
+  xlab = "Mean PEFR (per subject)",
+  ylab = "Difference in PEFR (per subject)",
+  pch = 21,
+  col = "darkblue",
+  bg = "lightblue",
+  cex = 1.2
+)
+```
+
+which outputs this plot (see @fig-ba-plot-3):
+
+```{r}
+#| label: fig-ba-plot-3
+#| fig-cap: Bland and Altman plot with customised points styles and colours
+#| echo: false
+
+plot_ba(
+  ba_metrics, 
+  title = "Wright vs Mini-Wright",
+  xlab = "Mean PEFR (per subject)",
+  ylab = "Difference in PEFR (per subject)",
+  pch = 21,
+  col = "darkblue",
+  bg = "lightblue",
+  cex = 1.2
+)
+```
+
+<br/>
+
+The output plot has much bigger points than the previous plot and because we used one of the points with a fill element, the points have a dark blue outline and a light blue fill.
+
+## Some guidance on plotting functions {#sec-advice-plot-functions}
+
+Data visualisation using plots in R is a very individual-preference type of approach. Hence, the general recommendation on making plotting functions is to be a little bit opinionated with the plot style (colours, line types and widths, text labels, sizes, etc.) based on your individual style. Because you are making a function intended for your use, you want that function to implement the style and look that you like. What this means, however, is that your function is most likely something that will be used only by you or others who might like your style and preference.
 
 
+
+<br/>
 
 [^1]: This dataset is a teaching dataset and is provided by Bland and Altman in their paper. It is very reasonable to expect that no changes will happen to this dataset in the future.
 
