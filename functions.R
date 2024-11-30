@@ -170,14 +170,74 @@ calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
 
 # modular approach: create multiple functions that calculates each component
 # metric of the BA plot and then assemble them into one overall function
-#   - m1 - A vector of first measurements
-#   - m2 - A vector of second measurements
 #   - ba_data - A data.frame of the Bland Altman dataset
 #   - type - format of output - list for list or df for data.frame
 
-calculate_mean_values <- function(m1, m2) { (m1 + m2) / 2 }
+calculate_mean_values <- function(ba_data) { 
+  (ba_data$Wright + ba_data$Mini) / 2 
+}
 
-calculate_diff_values <- function(m1, m2) { m1 - m2 }
+calculate_diff_values <- function(ba_data) { 
+  ba_data$Wright - ba_data$Mini 
+}
+
+calculate_mean_diff <- function(ba_data) {
+  mean(calculate_diff_values(ba_data))
+}
+
+calculate_diff_limits <- function(ba_data) {
+  differences <- calculate_diff_values(ba_data)
+  mean_differences <- calculate_mean_diff(ba_data)
+
+  upper_limit <- mean_differences + 1.96 * sd(differences)
+  lower_limit <- mean_differences - 1.96 * sd(differences)
+
+  c(upper_limit, lower_limit)
+}
+
+calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
+  type <- match.arg(type)
+
+  mean_values <- calculate_mean_values(ba_data)
+  differences <- calculate_diff_values(ba_data)
+  mean_differences <- calculate_mean_diff(ba_data)
+  limits <- calculate_diff_limits(ba_data)
+
+  if (type == "list") {
+    list(
+      mean_values = mean_values,
+      differences = differences,
+      mean_differences = mean_differences,
+      upper_limit = limits[1],
+      lower_limit = limits[2]
+    )
+  } else {
+    data.frame(
+      ba_data, mean_values, differences, mean_differences,
+      upper_limit = limits[1], lower_limit = limits[2]
+    )
+  }
+}
+
+### Function to calculate Bland and Altman metrics - universal approach ----
+
+# universal approach: create multiple functions that calculates each component
+# metric of the BA plot and then assemble them into one overall function that
+# can take on any dataset with any two measurements being compared with each
+# other.
+#   - df - A data.frame containing measurement values that can be analysed with
+#     the Bland and Altman approach
+#   - m1 - A character value of the variable name for first measurements
+#   - m2 - A character value of the variable name for second measurements
+#   - type - format of output - list for list or df for data.frame
+
+calculate_mean_values <- function(m1, m2) { 
+  (m1 + m2) / 2 
+}
+
+calculate_diff_values <- function(m1, m2) { 
+  m1 - m2 
+}
 
 calculate_mean_diff <- function(m1, m2) {
   mean(calculate_diff_values(m1 = m1, m2 = m2))
@@ -193,48 +253,13 @@ calculate_diff_limits <- function(m1, m2) {
   c(upper_limit, lower_limit)
 }
 
-calculate_ba_metrics <- function(ba_data, type = c("list", "df")) {
-  type <- match.arg(type)
-
-  mean_values <- calculate_mean_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  differences <- calculate_diff_values(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  mean_differences <- calculate_mean_diff(m1 = ba_data$Wright, m2 = ba_data$Mini)
-  limits <- calculate_diff_limits(m1 = ba_data$Wright, m2 = ba_data$Mini)
-
-  if (type == "list") {
-    list(
-      mean_values = mean_values,
-      differences = differences,
-      mean_differences = mean_differences,
-      upper_limit = limits[1],
-      lower_limit = limits[2]
-    )
-  } else {
-    data.frame(
-      ba_data, mean_values, differences, mean_differences,
-      upper_limit, lower_limit
-    )
-  }
-}
-
-### Function to calculate Bland and Altman metrics - universal approach ----
-
-# universal approach: create multiple functions that calculates each component
-# metric of the BA plot and then assemble them into one overall function that
-# can take on any dataset with any two measurements being compared with each
-# other.
-#   - m1 - A character value of the variable name for first measurements
-#   - m2 - A character value of the variable name for second measurements
-#   - ba_data - A data.frame of the Bland Altman dataset
-#   - type - format of output - list for list or df for data.frame
-
 calculate_ba_metrics <- function(df, 
                                  m1, m2, 
                                  type = c("list", "df")) {
   type <- match.arg(type)
 
-  m1 <- df[[m1]]
-  m2 <- df[[m2]]
+  m1 <- df[ , m1]
+  m2 <- df[ , m2]
 
   mean_values <- calculate_mean_values(m1 = m1, m2 = m2)
   differences <- calculate_diff_values(m1 = m1, m2 = m2)
@@ -251,7 +276,7 @@ calculate_ba_metrics <- function(df,
     )
   } else {
     data.frame(
-      ba_data, mean_values, differences, mean_differences,
+      df, mean_values, differences, mean_differences,
       upper_limit = limits[1], lower_limit = limits[2]
     )
   }
@@ -300,7 +325,7 @@ plot_ba <- function(ba_metrics,
     x = ba_metrics$mean_values, 
     y = ba_metrics$differences,
     main = title,
-    xlab = xlab, ylab = NULL
+    xlab = xlab, ylab = ylab
   )
 
   abline(h = ba_metrics$mean_differences, lty = 2, lwd = 0.7)

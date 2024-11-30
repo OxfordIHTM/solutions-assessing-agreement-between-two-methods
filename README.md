@@ -54,7 +54,7 @@ Develop a function that creates a Bland and Altman plot as described in the arti
 
 ## Solutions
 
-A solutions script named [`functtions.R`](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/blob/main/functions.R) is found in this repository. The script provides various possible solutions for each of the tasks above.
+A solutions script named [`functions.R`](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/blob/main/functions.R) is found in this repository. The script provides various possible solutions for each of the tasks above.
 
 A solutions script named [`ba.R`](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/blob/ba.R) is found in this repository. The script provides an example R script workflow that utilises the functions created in `functions.R` to perform the required analysis and plotting.
 
