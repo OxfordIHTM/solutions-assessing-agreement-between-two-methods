@@ -3,6 +3,8 @@
 <!-- badges: start -->
 ![License for code](https://img.shields.io/badge/license_for_code-GPL3.0-blue)
 ![License for text](https://img.shields.io/badge/license_for_writing-CC_BY_4.0-blue)
+[![Publish tutorial notes](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/actions/workflows/publish.yml/badge.svg)](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/actions/workflows/publish.yml)
+[![pages-build-deployment](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/OxfordIHTM/solutions-assessing-agreement-between-two-methods/actions/workflows/pages/pages-build-deployment)
 [![DOI](https://zenodo.org/badge/894987070.svg)](https://zenodo.org/badge/latestdoi/894987070)
 <!-- badges: end -->
 
