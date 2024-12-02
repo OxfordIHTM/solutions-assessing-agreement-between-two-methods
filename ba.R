@@ -21,7 +21,7 @@ ba_metrics <- calculate_ba_metrics(df = ba_data, m1 = "Wright", m2 = "Mini")
 
 plot_ba(
   ba_metrics,
-  title = "Wrigth vs Mini-Wright",
+  title = "Wright vs Mini-Wright",
   xlab = "Mean PEFR (per subject)",
   ylab = "Difference in PEFR (per subject)",
   pch = 21, col = "darkblue", bg = "lightblue", cex = 1.2
